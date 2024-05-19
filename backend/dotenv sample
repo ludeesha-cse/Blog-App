@@ -1,0 +1,2 @@
+MONGO_URI = mongodb+srv://<username>:<password>@cluster0.49yigan.mongodb.net/BlogApp?retryWrites=true&w=majority
+JWT_SECRET = "secret key"
