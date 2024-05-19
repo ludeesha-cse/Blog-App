@@ -12,7 +12,6 @@ export default function Dashboard() {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab"); // http://localhost:5173/dashboard?tab=profile
     //you get the value of tab from the url
-    console.log(tabFromUrl);
     setTab(tabFromUrl);
   }, [location.search]);
 

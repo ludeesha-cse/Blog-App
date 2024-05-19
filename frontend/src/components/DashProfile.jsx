@@ -1,18 +1,24 @@
-import { Button, TextInput } from "flowbite-react";
+import { Alert, Button, TextInput } from "flowbite-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { app } from "../firebase";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 export default function DashProfile() {
   const { currentUser } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
-  const [ imageFileUploadProgress, setImageFileUploadProgress ] = useState(0); // [1]
+  const [imageFileUploadProgress, setImageFileUploadProgress] = useState(0); // [1]
   const [imageFileUploadError, setImageFileUploadError] = useState(null); // [2]
   const filePickerRef = useRef();
 
-  console.log(imageFileUploadProgress, imageFileUploadError);
   const hanldeImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -23,6 +29,7 @@ export default function DashProfile() {
 
   useEffect(() => {
     if (imageFile) {
+      setImageFileUploadError(null);
       uploadImage();
     }
   }, [imageFile]);
@@ -38,25 +45,44 @@ export default function DashProfile() {
     //     }
     //   }
     // }
+
+    const fileType = imageFile.type;
+    const fileSize = imageFile.size;
+
+    if (!fileType.startsWith("image/")) {
+      setImageFileUploadError("Invalid file type. Only images are allowed.");
+      setImageFileUrl(null);
+      return;
+    }
+
+    if (fileSize > 2 * 1024 * 1024) {
+      // 2MB in bytes
+      setImageFileUploadError("File must be less than 2MB.");
+      setImageFileUrl(null);
+      return;
+    }
+
     const storage = getStorage(app);
     const fileName = new Date().getTime() + imageFile.name;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, imageFile);
     uploadTask.on(
-      'state_changed',
+      "state_changed",
       (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImageFileUploadProgress(progress.toFixed(0));
-        
       },
       (error) =>
-        setImageFileUploadError("Failed to upload image. File must be less than 2MB"),
+        setImageFileUploadError(
+          "Failed to upload image. File must be less than 2MB"
+        ),
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setImageFileUrl(downloadURL);
         });
       }
-    )
+    );
   };
 
   return (
@@ -71,16 +97,46 @@ export default function DashProfile() {
           className="hidden"
         />
         <div
-          className="w-32 h-32 self-center cursor-pointer shadow-md 
-                    overflow-hidden rounded-full"
+          className="relative w-32 h-32 self-center cursor-pointer shadow-md 
+               overflow-hidden rounded-full"
           onClick={() => filePickerRef.current.click()}
         >
+          {imageFileUploadProgress && imageFileUploadProgress < 100 && (
+            <CircularProgressbar
+              value={imageFileUploadProgress || 0}
+              text={`${imageFileUploadProgress}%`}
+              strokeWidth={5}
+              styles={{
+                root: {
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                },
+                path: {
+                  stroke: `rgba(62, 152, 199, ${
+                    imageFileUploadProgress / 100
+                  })`,
+                },
+              }}
+            />
+          )}
           <img
             src={imageFileUrl || currentUser.profilePicture}
             alt="user"
-            className="rounded-full w-full h-full border-8 border-[lightgray]"
+            className={`absolute top-0 left-0 rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
+              imageFileUploadProgress &&
+              imageFileUploadProgress < 100 &&
+              "opacity-60"
+            }`}
           />
         </div>
+        {imageFileUploadError && (
+          <Alert color="failure" className="text-center">
+            {imageFileUploadError}
+          </Alert>
+        )}
         <TextInput
           type="text"
           id="username"
