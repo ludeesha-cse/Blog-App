@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { dbConnect } from "./config/dbconfig.js";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ dbConnect();
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
