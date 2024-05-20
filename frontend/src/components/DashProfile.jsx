@@ -16,7 +16,8 @@ import {
   updateSuccess,
   deleteUserFailure,
   deleteUserStart,
-  deleteUserSuccess
+  deleteUserSuccess,
+  signoutSuccess,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -153,7 +154,7 @@ export default function DashProfile() {
       dispatch(updateFailure(error.message));
     }
   };
-  
+
   const handleDeleteUser = async () => {
     setShowModal(false);
     try {
@@ -171,7 +172,23 @@ export default function DashProfile() {
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
     }
-  }
+  };
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch("api/user/signout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
@@ -253,7 +270,9 @@ export default function DashProfile() {
         <span onClick={() => setShowModal(true)} className="cursor-pointer">
           Delete account
         </span>
-        <span className="cursor-pointer">Sign Out</span>
+        <span onClick={handleSignout} className="cursor-pointer">
+          Sign Out
+        </span>
       </div>
       {updateUserSuccess && (
         <Alert color="success" className="text-center mt-5">
@@ -288,10 +307,16 @@ export default function DashProfile() {
               Are you Sure you want to delete your account
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" className="mr-3" onClick={handleDeleteUser}>
+              <Button
+                color="failure"
+                className="mr-3"
+                onClick={handleDeleteUser}
+              >
                 Yes
               </Button>
-              <Button color='gray' onClick={() => setShowModal(false)}>No, Cancel</Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                No, Cancel
+              </Button>
             </div>
           </div>
         </Modal.Body>

@@ -7,54 +7,73 @@ export const test = (req, res) => {
 };
 
 export const updateUser = async (req, res, next) => {
-  if(req.user.id !== req.params.userId){
+  if (req.user.id !== req.params.userId) {
     return next(errorHandler(403, "Unauthorized"));
   }
-  if(req.body.password){
-    if(req.body.password.length < 6){
+  if (req.body.password) {
+    if (req.body.password.length < 6) {
       return next(errorHandler(400, "Password must be at least 6 characters"));
     }
     req.body.password = bcryptjs.hashSync(req.body.password, 12);
   }
 
-  if(req.body.username){
-    if(req.body.username.length < 4 || req.body.username.length > 20){
-      return next(errorHandler(400, "Username must be between 4 and 20 characters"));
+  if (req.body.username) {
+    if (req.body.username.length < 4 || req.body.username.length > 20) {
+      return next(
+        errorHandler(400, "Username must be between 4 and 20 characters")
+      );
     }
-    if(req.body.username.includes(" ")){
+    if (req.body.username.includes(" ")) {
       return next(errorHandler(400, "Username cannot contain spaces"));
     }
-    if(req.body.username !== req.body.username.toLowerCase()){
+    if (req.body.username !== req.body.username.toLowerCase()) {
       return next(errorHandler(400, "Username must be lowercase"));
     }
-    if(!req.body.username.match(/^[a-zA-Z0-9]+$/)){
-      return next(errorHandler(400, "Username can only contain letters and numbers"));
+    if (!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
+      return next(
+        errorHandler(400, "Username can only contain letters and numbers")
+      );
     }
   }
   try {
-    const updateUser = await User.findByIdAndUpdate(req.params.userId, {
-      $set:{
-        username: req.body.username,
-        email: req.body.email,
-        profilePicture: req.body.profilePicture,
-        password: req.body.password,
+    const updateUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $set: {
+          username: req.body.username,
+          email: req.body.email,
+          profilePicture: req.body.profilePicture,
+          password: req.body.password,
+        },
       },
-    },{new: true});
+      { new: true }
+    );
     const { password, ...userWithoutPassword } = updateUser._doc;
     res.status(200).json(userWithoutPassword);
   } catch (error) {
-    next(error)
+    next(error);
   }
-}
+};
 
 export const deleteUser = async (req, res, next) => {
-  if(req.user.id !== req.params.userId){
+  if (req.user.id !== req.params.userId) {
     return next(errorHandler(403, "Unauthorized"));
   }
   try {
     await User.findByIdAndDelete(req.params.userId);
     res.status(200).json({ message: "User deleted successfully" });
-  }catch(error){
-    next(error)
+  } catch (error) {
+    next(error);
   }
-}
+};
+
+export const signOut = (req, res, next) => {
+  try {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json({ message: "Signout successful" });
+  } catch (error) {
+    next(error);
+  }
+};
