@@ -10,7 +10,11 @@ import {
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { updateFailure, updateStart, updateSuccess } from "../redux/user/userSlice";
+import {
+  updateFailure,
+  updateStart,
+  updateSuccess,
+} from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 
 export default function DashProfile() {
@@ -19,6 +23,9 @@ export default function DashProfile() {
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(0);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
+  const [imageFileUploading, setImageFileUploading] = useState(false);
+  const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
+  const [updateUserError, setUpdateUserError] = useState(null);
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
 
@@ -47,12 +54,15 @@ export default function DashProfile() {
     //   }
     // }
 
+    setImageFileUploading(true);
     const fileType = imageFile.type;
     const fileSize = imageFile.size;
 
     if (!fileType.startsWith("image/")) {
       setImageFileUploadError("Invalid file type. Only images are allowed.");
       setImageFileUrl(null);
+      setImageFileUploading(false);
+      setImageFile(null);
       return;
     }
 
@@ -60,6 +70,8 @@ export default function DashProfile() {
       // 2MB in bytes
       setImageFileUploadError("File must be less than 2MB.");
       setImageFileUrl(null);
+      setImageFileUploading(false);
+      setImageFile(null);
       return;
     }
 
@@ -74,14 +86,20 @@ export default function DashProfile() {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImageFileUploadProgress(progress.toFixed(0));
       },
-      (error) =>
+      (error) => {
         setImageFileUploadError(
           "Failed to upload image. File must be less than 2MB"
-        ),
+        );
+        setImageFileUploading(false);
+        setImageFileUploadProgress(null);
+        setImageFileUrl(null);
+        setImageFile(null);
+      },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setImageFileUrl(downloadURL);
           setFormData({ ...formData, profilePicture: downloadURL });
+          setImageFileUploading(false);
         });
       }
     );
@@ -97,7 +115,14 @@ export default function DashProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setUpdateUserError(null);
+    setUpdateUserSuccess(null);
+    if(imageFileUploading){
+      setUpdateUserError("Please wait for image to upload");
+      return;
+    }
     if (Object.keys(formData).length === 0) {
+      setUpdateUserError("Please update at least one field");
       return;
     }
     try {
@@ -111,13 +136,15 @@ export default function DashProfile() {
       });
       const data = await res.json();
 
-
       if (!res.ok) {
         dispatch(updateFailure(data.message));
+        setUpdateUserError(data.message);
       } else {
         dispatch(updateSuccess(data));
+        setUpdateUserSuccess("Profile updated successfully");
       }
     } catch (error) {
+      setUpdateUserError(error.message);
       dispatch(updateFailure(error.message));
     }
   };
@@ -202,6 +229,16 @@ export default function DashProfile() {
         <span className="cursor-pointer">Delete account</span>
         <span className="cursor-pointer">Sign Out</span>
       </div>
+      {updateUserSuccess && (
+        <Alert color="success" className="text-center mt-5">
+          {updateUserSuccess}
+        </Alert>
+      )}
+      {updateUserError && !updateUserSuccess &&(
+        <Alert color="failure" className="text-center mt-5">
+          {updateUserError}
+        </Alert>
+      )}
     </div>
   );
 }
