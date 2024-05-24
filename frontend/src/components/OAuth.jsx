@@ -16,7 +16,7 @@ export default function OAuth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleGoofleClick = async () => {
+  const handleGoogleClick = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
     try {
@@ -47,7 +47,7 @@ export default function OAuth() {
       type="button"
       className="bg-gradient-to-r from-yellow-300 via-orange-500 to-pink-600"
       outline
-      onClick={handleGoofleClick}
+      onClick={handleGoogleClick}
     >
       <AiFillGoogleCircle className="w-6 h-6" />
       <span> Continue with google</span>

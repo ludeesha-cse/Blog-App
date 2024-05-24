@@ -34,6 +34,8 @@ export default function DashProfile() {
   const [updateUserError, setUpdateUserError] = useState(null);
   const [formData, setFormData] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const [updatePasswordView, setUpdatePasswordView] = useState(false);
+
   const filePickerRef = useRef();
 
   const dispatch = useDispatch();
@@ -257,12 +259,19 @@ export default function DashProfile() {
           defaultValue={currentUser.email}
           onChange={handleChange}
         />
-        <TextInput
+        {!updatePasswordView && (
+          <span
+            className="text-blue-500 cursor-pointer self-center"
+            onClick={() => setUpdatePasswordView(true)}
+          >
+            Change password
+          </span>)}
+        {updatePasswordView && <TextInput
           type="password"
           id="password"
           placeholder="password"
           onChange={handleChange}
-        />
+        />}
         <Button type="submit" className="self-center" disabled={ loading || imageFileUploading}>
           {loading ? "Loading..." : "Update"}
         </Button>
