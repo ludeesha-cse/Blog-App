@@ -1,11 +1,12 @@
 import React from "react";
 import { Sidebar } from "flowbite-react";
-import { HiArrowSmRight, HiUser } from "react-icons/hi";
+import { HiArrowSmRight, HiDocumentText, HiUser } from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice";
+import { useSelector } from "react-redux";
 
 export default function DashSidebar() {
   const location = useLocation();
@@ -14,6 +15,8 @@ export default function DashSidebar() {
 
   const [tab, setTab] = useState("");
 
+  const { currentUser } = useSelector((state) => state.user);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab"); // http://localhost:5173/dashboard?tab=profile
@@ -21,8 +24,12 @@ export default function DashSidebar() {
     setTab(tabFromUrl);
   }, [location.search]);
 
-  const handleNavigation = () => {
+  const navigateToProfile = () => {
     navigate("/dashboard?tab=profile");
+  };
+
+  const navigateToPosts = () => {
+    navigate("/dashboard?tab=posts");
   };
 
   const handleSignout = async () => {
@@ -44,16 +51,26 @@ export default function DashSidebar() {
   return (
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
-        <Sidebar.ItemGroup>
+        <Sidebar.ItemGroup className="flex flex-col gap-1">
           <Sidebar.Item
-            onClick={handleNavigation}
+            onClick={navigateToProfile}
             active={tab === "profile"}
             icon={HiUser}
-            label={"User"}
+            label={currentUser.isAdmin ? "Admin" : "User"}
             labelColor="dark"
           >
             Profile
           </Sidebar.Item>
+
+          {currentUser.isAdmin && (
+            <Sidebar.Item
+              onClick={navigateToPosts}
+              active={tab === "posts"}
+              icon={HiDocumentText}
+            >
+              Posts
+            </Sidebar.Item>
+          )}
 
           <Sidebar.Item
             icon={HiArrowSmRight}
