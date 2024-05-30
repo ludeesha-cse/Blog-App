@@ -11,7 +11,7 @@ import {
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
   const [file, setFile] = useState(null);
@@ -25,6 +25,10 @@ export default function CreatePost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (file && imageUploadProgress != 100 && !formData.image) {
+        setImageUploadError("Please wait for image to upload");
+        return;
+      }
       const res = await fetch("api/post/create", {
         method: "POST",
         headers: {
@@ -34,18 +38,16 @@ export default function CreatePost() {
       });
       const data = await res.json();
 
-      if(!res.ok) {
-        setPublishError(data.message)
+      if (!res.ok) {
+        setPublishError(data.message);
         return;
       }
       if (res.ok) {
         setPublishError(null);
         navigate(`/post/${data.slug}`);
       }
-
     } catch (error) {
       setPublishError("Failed to publish post");
-      
     }
   };
 
