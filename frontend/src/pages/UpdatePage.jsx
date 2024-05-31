@@ -38,7 +38,6 @@ export default function UpdatePost() {
         if (res.ok) {
           setPublishError(null);
           setFormData(data.posts[0]);
-          console.log(formData);
         }
       };
       fetchPost();
