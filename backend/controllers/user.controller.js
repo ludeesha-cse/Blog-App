@@ -56,7 +56,7 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
-  if ( !req.user.isAdmin && req.user.id !== req.params.userId ) {
+  if (!req.user.isAdmin && req.user.id !== req.params.userId) {
     return next(errorHandler(403, "Unauthorized"));
   }
   try {
@@ -113,7 +113,20 @@ export const getUsers = async (req, res, next) => {
       createdAt: { $gte: oneMonthAgo },
     });
 
-    res.status(200).json({users:userWithourPassword, totalUsers, lastMonthUsers});
+    res
+      .status(200)
+      .json({ users: userWithourPassword, totalUsers, lastMonthUsers });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    const { password, ...userWithoutPassword } = user._doc;
+    res.status(200).json(userWithoutPassword);
   } catch (error) {
     next(error);
   }
