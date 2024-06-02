@@ -22,7 +22,6 @@ export default function Comment({ comment, onLike, onEdit }) {
         }
       } catch (error) {
         console.log(error);
-        setEditCommentError(error.message)
       }
     };
     getUser();
@@ -44,10 +43,18 @@ export default function Comment({ comment, onLike, onEdit }) {
       });
       if (res.ok) {
         setIsEditting(false);
+        setEditCommentError(null);
         onEdit(comment, editedComment);
       }
+      if(!res.ok) {
+        setIsEditting(false);
+        const data = await res.json();
+        setEditCommentError(data.message);
+      }
     } catch (error) {
+      setIsEditting(false);
       console.log(error);
+      setEditCommentError(error.message);
     }
   };
 
@@ -131,13 +138,14 @@ export default function Comment({ comment, onLike, onEdit }) {
                     Edit
                   </button>
                 )}
-                {/* edit comment error */}
-                {editCommentError && (
-                  <Alert color="failure">
-                    <p>{editCommentError}</p>
-                  </Alert>
-                )}
+              {/* edit comment error */}
+              
             </div>
+            {editCommentError && (
+                <Alert color="failure">
+                  <p>{editCommentError}</p>
+                </Alert>
+              )}
           </>
         )}
       </div>
