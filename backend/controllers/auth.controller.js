@@ -46,8 +46,7 @@ export const signin = async (req, res, next) => {
         id: validUser._id,
         isAdmin: validUser.isAdmin
       },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      process.env.JWT_SECRET
     );
 
     const { password: userPassword, ...userWithoutPassword } = validUser._doc;
@@ -72,8 +71,7 @@ export const googleSign = async (req, res, next) => {
           id: user._id,
           isAdmin: user.isAdmin
         },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        process.env.JWT_SECRET
       );
       const { password: userPassword, ...userWithoutPassword } = user._doc;
       res
@@ -99,8 +97,7 @@ export const googleSign = async (req, res, next) => {
           id: newUser._id,
           isAdmin: newUser.isAdmin
         },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        process.env.JWT_SECRET
       );
       const { password: userPassword, ...userWithoutPassword } = newUser._doc;
       res
