@@ -1,6 +1,13 @@
 import React from "react";
 import { Sidebar } from "flowbite-react";
-import { HiArrowSmRight, HiDocumentText, HiUser,HiOutlineUserGroup, HiAnnotation } from "react-icons/hi";
+import {
+  HiArrowSmRight,
+  HiDocumentText,
+  HiUser,
+  HiOutlineUserGroup,
+  HiAnnotation,
+  HiChartPie,
+} from "react-icons/hi";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -34,11 +41,15 @@ export default function DashSidebar() {
 
   const navigateToUsers = () => {
     navigate("/dashboard?tab=users");
-  }
+  };
 
   const navigateToComments = () => {
     navigate("/dashboard?tab=comments");
-  }
+  };
+
+  const navigateToDash = () => {
+    navigate("/dashboard?tab=dash");
+  };
 
   const handleSignout = async () => {
     try {
@@ -60,6 +71,16 @@ export default function DashSidebar() {
     <Sidebar className="w-full md:w-56">
       <Sidebar.Items>
         <Sidebar.ItemGroup className="flex flex-col gap-1">
+          {currentUser.isAdmin && (
+            <Sidebar.Item
+              onClick={navigateToDash}
+              active={tab === "dash"}
+              icon={HiChartPie}
+            >
+              Dashboard
+            </Sidebar.Item>
+          )}
+
           <Sidebar.Item
             onClick={navigateToProfile}
             active={tab === "profile"}
