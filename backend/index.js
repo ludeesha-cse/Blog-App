@@ -15,9 +15,9 @@ dbConnect();
 const app = express();
 
 const corsOptions = {
-  origin: "https://blogapp-tdgg.onrender.com", // Replace with your frontend URL
+  origin: ["https://blogapp-tdgg.onrender.com","*"], // Replace with your frontend URL
   methods: "GET,POST,PUT,DELETE",
-  credentials: true, // Allow cookies to be sent with requests
+  credentials: true,  // Allow cookies to be sent with requests
 };
 
 app.use(cors(corsOptions));
@@ -35,7 +35,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/post", postRoutes);
 
-app.use("/api/comment", commentRoutes);
+app.use("/api/comment", commentRoutes)
 
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode || 500;
