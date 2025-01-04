@@ -1,9 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-//when frontend folder is inside of backend folder
-// import { deleteUser } from "../../../../controllers/user.controller";
-
-// when frontend folder is outside of backend folder
-// import { deleteUser } from "../../../../backend/controllers/user.controller";
+import { deleteUser } from "../../../../backend/controllers/user.controller";
 
 const initialState = {
   currentUser: null,
