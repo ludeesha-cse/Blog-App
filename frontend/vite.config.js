@@ -7,7 +7,6 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "https://blog-app-2ell.onrender.com",
-        secure: true,
         changeOrigin: true,
       },
     },
