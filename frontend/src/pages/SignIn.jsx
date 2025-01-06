@@ -8,14 +8,7 @@ import {
 } from "../redux/user/userSlice";
 import {useDispatch, useSelector} from "react-redux";
 import OAuth from "../components/OAuth";
-const apiUrlenv = import.meta.env.VITE_API_URL;
-
-const apiUrl =
-  import.meta.env.MODE === "development"
-    ? "/api" // Use proxy during development
-    : apiUrlenv;
-
-
+// const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function SignIn() {
   // console.log(apiUrl);
@@ -39,7 +32,7 @@ export default function SignIn() {
       // setLoading(true);
       // setErrorMessage(null);
       dispatch(signInStart());
-      const res = await fetch(`${apiUrl}/api/auth/signin`, {
+      const res = await fetch(`/api/auth/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
