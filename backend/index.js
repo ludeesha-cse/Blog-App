@@ -18,7 +18,7 @@ const __dirname = path.resolve();
 const app = express();
 
 const corsOptions = {
-  origin: ["https://blogapp-tdgg.onrender.com","*"], // Replace with your frontend URL
+  origin: ["https://blogapp-tdgg.onrender.com"], // Replace with your frontend URL
   methods: "GET,POST,PUT,DELETE",
   credentials: true,  // Allow cookies to be sent with requests
 };
