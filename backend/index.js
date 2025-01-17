@@ -8,6 +8,7 @@ import commentRoutes from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
+import morgan from "morgan";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ dbConnect();
 const __dirname = path.resolve();
 
 const app = express();
+app.use(morgan('dev'));
 
 const corsOptions = {
   origin: ["https://blogapp-tdgg.onrender.com"], // Replace with your frontend URL
