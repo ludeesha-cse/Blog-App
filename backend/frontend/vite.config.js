@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => {
     server: mode === "development" && {
       proxy: {
         "/api": {
-          target: "http://localhost:3000/",
+          target: "https://blog-app-2ell.onrender.com",
           changeOrigin: true,
         },
       },

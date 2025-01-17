@@ -8,7 +8,6 @@ import commentRoutes from "./routes/comment.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
-import morgan from "morgan";
 
 dotenv.config();
 
@@ -17,10 +16,9 @@ dbConnect();
 const __dirname = path.resolve();
 
 const app = express();
-app.use(morgan('dev'));
 
 const corsOptions = {
-  origin: ["https://blogapp-tdgg.onrender.com","http://localhost:5173/"], // Replace with your frontend URL
+  origin: ["https://blogapp-tdgg.onrender.com","*"], // Replace with your frontend URL
   methods: "GET,POST,PUT,DELETE",
   credentials: true,  // Allow cookies to be sent with requests
 };
@@ -42,11 +40,11 @@ app.use("/api/post", postRoutes);
 
 app.use("/api/comment", commentRoutes)
 
-// app.use(express.static(path.join(__dirname, "/frontend/dist")));
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "/frontend/dist/index.html"));
-// });
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "/frontend/dist/index.html"));
+});
 
 app.use((err, req, res, next) => {
   const statusCode = res.statusCode || 500;
