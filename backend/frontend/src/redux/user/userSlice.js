@@ -70,4 +70,6 @@ export const {
   signoutSuccess
 } = userSlice.actions;
 
+// export const cakeActions = userSlice.actions;
+
 export default userSlice.reducer;
