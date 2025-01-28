@@ -8,6 +8,7 @@ const initialState = {
 
 const userSlice = createSlice({
   name: "user",
+  // initialState: initialState,
   initialState,
   reducers: {
     signInStart: (state) => {

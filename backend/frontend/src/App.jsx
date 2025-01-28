@@ -1,24 +1,28 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import React from "react";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import Dashboard from "./pages/Dashboard";
-import Project from "./pages/Project";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Privateroute from "./components/Privateroute";
-import AdminRoute from "./components/AdminRoute";
-import CreatePost from "./pages/CreatePost";
-import UpdatePost from "./pages/UpdatePage";
-import PostPage from "./pages/PostPage";
-import ScrollToTop from "./components/ScrollToTop";
-import Search from "./pages/Search";
+import { lazy, Suspense } from 'react';
+import LoadingSpinner from './components/LoadingSpinner';
+
+const Home =  lazy(() => import("./pages/Home"));
+const About =  lazy(() => import("./pages/About"));
+const SignIn = lazy(() => import("./pages/SignIn"));
+const SignUp = lazy(() => import("./pages/SignUp"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Project = lazy(() => import("./pages/Project"));
+const Header = lazy(() => import("./components/Header"));
+const Footer = lazy(() => import("./components/Footer"));
+const Privateroute = lazy(() => import("./components/Privateroute"));
+const AdminRoute = lazy(() => import("./components/AdminRoute"));
+const CreatePost = lazy(() => import("./pages/CreatePost"));
+const UpdatePost = lazy(() => import("./pages/UpdatePage"));
+const PostPage = lazy(() => import("./pages/PostPage"));
+const ScrollToTop = lazy(() => import("./components/ScrollToTop"));
+const Search = lazy(() => import("./pages/Search"));
 
 export default function App() {
   return (
     <BrowserRouter>
+    <Suspense fallback={<LoadingSpinner />}>
     <ScrollToTop />
       <Header />
       <Routes>
@@ -39,6 +43,7 @@ export default function App() {
         <Route path="/post/:postSlug" element={<PostPage />} />
       </Routes>
       <Footer />
+      </Suspense>
     </BrowserRouter>
   );
 }

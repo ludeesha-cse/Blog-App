@@ -7,8 +7,11 @@ import {
   signInStart,
 } from "../redux/user/userSlice";
 import {useDispatch, useSelector} from "react-redux";
-import OAuth from "../components/OAuth";
+import { lazy, Suspense } from 'react';
+import LoadingSpinner from './components/LoadingSpinner';
 // const apiUrl = import.meta.env.VITE_API_URL;
+
+const OAuth = lazy(() => import("../components/OAuth"));
 
 export default function SignIn() {
   // console.log(apiUrl);
@@ -59,6 +62,7 @@ export default function SignIn() {
   };
 
   return (
+    <Suspense fallback={<LoadingSpinner />}>
     <div className="min-h-screen mt-20">
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         {/* left */}
@@ -126,5 +130,6 @@ export default function SignIn() {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 }

@@ -1,7 +1,12 @@
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import OAuth from "../components/OAuth";
+import { lazy, Suspense } from 'react';
+import LoadingSpinner from './components/LoadingSpinner';
+
+// import OAuth from "../components/OAuth";
+//changes the above import to lazy loading
+const OAuth = lazy(() => import("../components/OAuth"));
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -45,6 +50,7 @@ export default function SignUp() {
   };
 
   return (
+    <Suspense fallback={<LoadingSpinner />}>
     <div className="min-h-screen mt-20">
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         {/* left */}
@@ -118,5 +124,6 @@ export default function SignUp() {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 }
