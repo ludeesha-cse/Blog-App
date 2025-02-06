@@ -8,7 +8,7 @@ import {
 } from "../redux/user/userSlice";
 import {useDispatch, useSelector} from "react-redux";
 import { lazy, Suspense } from 'react';
-import LoadingSpinner from './components/LoadingSpinner';
+import LoadingSpinner from '../components/LoadingSpinner';
 // const apiUrl = import.meta.env.VITE_API_URL;
 
 const OAuth = lazy(() => import("../components/OAuth"));

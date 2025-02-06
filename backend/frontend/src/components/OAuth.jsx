@@ -20,6 +20,7 @@ export default function OAuth() {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
     try {
+      dispatch(signInStart());
       const resultsFromGoogle = await signInWithPopup(auth, provider);
       const res = await fetch("/api/auth/google", {
         method: "POST",
@@ -38,6 +39,7 @@ export default function OAuth() {
         navigate("/");
       }
     } catch (error) {
+      dispatch(signInFailure(error.message));
       console.log(error);
     }
   };
