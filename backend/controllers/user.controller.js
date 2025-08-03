@@ -131,3 +131,42 @@ export const getUser = async (req, res, next) => {
     next(error);
   }
 };
+
+export const toggleAdminStatus = async (req, res, next) => {
+  // Check if the current user is an admin
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, "Only admins can modify admin status"));
+  }
+
+  // Prevent user from removing their own admin status
+  if (req.user.id === req.params.userId) {
+    return next(errorHandler(400, "You cannot modify your own admin status"));
+  }
+
+  try {
+    const userToUpdate = await User.findById(req.params.userId);
+    
+    if (!userToUpdate) {
+      return next(errorHandler(404, "User not found"));
+    }
+
+    // Toggle the admin status
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $set: {
+          isAdmin: !userToUpdate.isAdmin,
+        },
+      },
+      { new: true }
+    );
+
+    const { password, ...userWithoutPassword } = updatedUser._doc;
+    res.status(200).json({
+      message: `User ${updatedUser.isAdmin ? 'promoted to' : 'removed from'} admin successfully`,
+      user: userWithoutPassword
+    });
+  } catch (error) {
+    next(error);
+  }
+};

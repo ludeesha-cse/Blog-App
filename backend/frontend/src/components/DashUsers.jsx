@@ -10,7 +10,9 @@ export default function DashUsers() {
   const [users, setUsers] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [userToToggleAdmin, setUserToToggleAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export default function DashUsers() {
       const res = await fetch(`/api/user/getusers?startIndex=${startIndex}`);
       const data = await res.json();
       if (res.ok) {
-        setUsers(data.users);
+        setUsers((prev) => [...prev, ...data.users]);
         if (data.users.length < 9) {
           setShowMore(false);
         }
@@ -59,6 +61,30 @@ export default function DashUsers() {
       if (res.ok) {
         setUsers((prev) => prev.filter((user) => user._id !== userIdToDelete));
         setShowModal(false);
+      } else {
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleToggleAdmin = async () => {
+    try {
+      const res = await fetch(`/api/user/toggle-admin/${userToToggleAdmin._id}`, {
+        method: "PUT",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setUsers((prev) =>
+          prev.map((user) =>
+            user._id === userToToggleAdmin._id
+              ? { ...user, isAdmin: !user.isAdmin }
+              : user
+          )
+        );
+        setShowAdminModal(false);
+        setUserToToggleAdmin(null);
       } else {
         console.log(data.message);
       }
@@ -107,11 +133,30 @@ export default function DashUsers() {
                   <Table.Cell>{user.username}</Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
                   <Table.Cell>
-                    {user.isAdmin ? (
-                      <FaCheck className="text-green-500" />
-                    ) : (
-                      <FaTimes className="text-red-500" />
-                    )}
+                    <div
+                      onClick={() => {
+                        if (user._id !== currentUser._id) {
+                          setShowAdminModal(true);
+                          setUserToToggleAdmin(user);
+                        }
+                      }}
+                      className={`${
+                        user._id !== currentUser._id
+                          ? "cursor-pointer hover:opacity-75"
+                          : "cursor-not-allowed opacity-50"
+                      }`}
+                      title={
+                        user._id === currentUser._id
+                          ? "You cannot modify your own admin status"
+                          : `Click to ${user.isAdmin ? "remove admin" : "make admin"}`
+                      }
+                    >
+                      {user.isAdmin ? (
+                        <FaCheck className="text-green-500" />
+                      ) : (
+                        <FaTimes className="text-red-500" />
+                      )}
+                    </div>
                   </Table.Cell>
                   <Table.Cell>
                     <span
@@ -166,6 +211,49 @@ export default function DashUsers() {
               </Button>
               <Button color="gray" onClick={() => setShowModal(false)}>
                 No, Cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+
+      <Modal
+        show={showAdminModal}
+        onClose={() => {
+          setShowAdminModal(false);
+          setUserToToggleAdmin(null);
+        }}
+        popup
+        size="md"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle
+              className="text-5xl text-amber-500
+            dark:text-gray-200 mb-4 mx-auto"
+            />
+            <h3 className="mb-5 text-lg text-gray-500 ">
+              {userToToggleAdmin?.isAdmin
+                ? `Are you sure you want to remove admin privileges from ${userToToggleAdmin?.username}?`
+                : `Are you sure you want to grant admin privileges to ${userToToggleAdmin?.username}?`}
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                color={userToToggleAdmin?.isAdmin ? "failure" : "success"}
+                className="mr-3"
+                onClick={handleToggleAdmin}
+              >
+                {userToToggleAdmin?.isAdmin ? "Remove Admin" : "Make Admin"}
+              </Button>
+              <Button
+                color="gray"
+                onClick={() => {
+                  setShowAdminModal(false);
+                  setUserToToggleAdmin(null);
+                }}
+              >
+                Cancel
               </Button>
             </div>
           </div>
