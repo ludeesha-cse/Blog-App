@@ -2,7 +2,7 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { lazy, Suspense } from 'react';
-import LoadingSpinner from './components/LoadingSpinner';
+import LoadingSpinner from "../components/LoadingSpinner";
 
 // import OAuth from "../components/OAuth";
 //changes the above import to lazy loading
