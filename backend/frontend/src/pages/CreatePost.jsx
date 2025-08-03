@@ -1,6 +1,5 @@
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
 import React, { useState } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {
   getDownloadURL,
@@ -12,6 +11,10 @@ import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
+
+import { lazy, Suspense } from "react";
+
+const ReactQuill = lazy(() => import("react-quill"));
 
 export default function CreatePost() {
   const [file, setFile] = useState(null);
@@ -153,14 +156,16 @@ export default function CreatePost() {
         {formData.image && (
           <img src={formData.image} alt="uploaded" className="w-full h-72" />
         )}
-        <ReactQuill
-          theme="snow"
-          id="content"
-          placeholder="Write something amazing..."
-          className="h-72 mb-12"
-          required
-          onChange={(value) => setFormData({ ...formData, content: value })}
-        />
+        <Suspense fallback={<div>Loading editor...</div>}>
+          <ReactQuill
+            theme="snow"
+            id="content"
+            placeholder="Write something amazing..."
+            className="h-72 mb-12"
+            required
+            onChange={(value) => setFormData({ ...formData, content: value })}
+          />
+        </Suspense>
         <Button
           type="submit"
           className="bg-gradient-to-r from-yellow-300 via-orange-500 to-pink-600"

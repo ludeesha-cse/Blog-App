@@ -1,0 +1,75 @@
+@startuml Blog Application Architecture
+
+' Define styles
+skinparam componentStyle uml2
+skinparam backgroundColor #FFFFFF
+skinparam handwritten false
+
+' Client Layer
+package "Client Layer" {
+    [React Frontend]
+}
+
+' API Gateway
+package "API Gateway" {
+    [Express Server]
+    [Authentication Middleware]
+    [Rate Limiter]
+    [Request Validator]
+}
+
+' Service Layer
+package "Service Layer" {
+    [AuthService]
+    [BlogService]
+    [UserService]
+    [CommentService]
+    [SearchService]
+    [MediaService]
+}
+
+' Data Access Layer
+package "Data Access Layer" {
+    [UserRepository]
+    [BlogRepository]
+    [CommentRepository]
+}
+
+' External Services
+cloud "External Services" {
+    [CloudStorage]
+    [EmailService]
+    [SearchEngine]
+}
+
+' Databases
+database "Databases" {
+    [MongoDB] as MainDB
+    [Redis] as CacheDB
+}
+
+' Define relationships
+[React Frontend] --> [Express Server]
+[Express Server] --> [Authentication Middleware]
+[Express Server] --> [Rate Limiter]
+[Express Server] --> [Request Validator]
+
+[Authentication Middleware] --> [AuthService]
+[Express Server] --> [BlogService]
+[Express Server] --> [UserService]
+[Express Server] --> [CommentService]
+[Express Server] --> [SearchService]
+[Express Server] --> [MediaService]
+
+[BlogService] --> [BlogRepository]
+[UserService] --> [UserRepository]
+[CommentService] --> [CommentRepository]
+[SearchService] --> [SearchEngine]
+[MediaService] --> [CloudStorage]
+
+[BlogRepository] --> MainDB
+[UserRepository] --> MainDB
+[CommentRepository] --> MainDB
+[AuthService] --> CacheDB
+
+@enduml

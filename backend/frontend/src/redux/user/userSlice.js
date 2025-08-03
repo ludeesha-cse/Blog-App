@@ -8,6 +8,7 @@ const initialState = {
 
 const userSlice = createSlice({
   name: "user",
+  // initialState: initialState,
   initialState,
   reducers: {
     signInStart: (state) => {
@@ -69,5 +70,7 @@ export const {
   deleteUserSuccess,
   signoutSuccess
 } = userSlice.actions;
+
+// export const cakeActions = userSlice.actions;
 
 export default userSlice.reducer;

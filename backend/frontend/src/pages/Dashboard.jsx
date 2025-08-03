@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import DashSidebar from "../components/DashSidebar";
-import DashProfile from "../components/DashProfile";
-import DashPosts from "../components/DashPosts";
-import DashUsers from "../components/DashUsers";
-import DashComments from "../components/DashComments";
-import DashboardComp from "../components/DashboardComp";
+import { lazy, Suspense } from "react";
+
+const DashSidebar = lazy(() => import("../components/DashSidebar"));
+const DashProfile = lazy(() => import("../components/DashProfile"));
+const DashPosts = lazy(() => import("../components/DashPosts"));
+const DashUsers = lazy(() => import("../components/DashUsers"));
+const DashComments = lazy(() => import("../components/DashComments"));
+const DashboardComp = lazy(() => import("../components/DashboardComp"));
+
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -23,18 +27,40 @@ export default function Dashboard() {
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Side bar */}
       <div className="md:w-56">
-        <DashSidebar />
+        <Suspense fallback={<LoadingSpinner />}>
+          <DashSidebar />
+        </Suspense>
       </div>
       {/* profile */}
-      {tab === "profile" && <DashProfile />}
+      {tab === "profile" && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <DashProfile />
+        </Suspense>
+      )}
       {/* posts */}
-      {tab === "posts" && <DashPosts />}
+      {tab === "posts" && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <DashPosts />
+        </Suspense>
+      )}
       {/* users */}
-      {tab === "users" && <DashUsers />}
+      {tab === "users" && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <DashUsers />
+        </Suspense>
+      )}
       {/* comments */}
-      {tab === "comments" && <DashComments />}
+      {tab === "comments" && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <DashComments />
+        </Suspense>
+      )}
       {/* DashBoard */}
-      {tab === "dash" && <DashboardComp />}
+      {tab === "dash" && (
+        <Suspense fallback={<LoadingSpinner />}>
+          <DashboardComp />
+        </Suspense>
+      )}
     </div>
   );
 }
