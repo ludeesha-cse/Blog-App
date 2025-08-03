@@ -21,22 +21,20 @@ export default function Home() {
 
   return (
     <div>
-      <div className="flex flex-col gap-6 p-28 px-3">
+      <div className="flex flex-col items-center gap-6 p-6 px-3">
         <h1 className="text-3xl font-bold lg:text-6xl">Welcome to my blog</h1>
         <p className="text-gray-500 text-xs sm:text-sm">
-          Here ypu'll find a variety of articles on topics such as web
+          Here you'll find a variety of articles on topics such as web
           development, software engineering and programming languages.
         </p>
         <Link
           to={"/search"}
-          className="tetx-xs sm:text-sm text-teal-500 hover:underline"
+          className="text-xs sm:text-sm text-teal-500 hover:underline"
         >
           View All post
         </Link>
       </div>
-      <div className="p-3 bg-amber-100 dark:bg-slate-700">
-        <CallToAction />
-      </div>
+
       <div className="max-w-6xl mx-auto flex flex-col gap-8 py-7">
         {posts && posts.length > 0 && (
           <div className="flex flex-col gap-6">
@@ -46,9 +44,17 @@ export default function Home() {
                 <PostCard key={post._id} post={post} />
               ))}
             </div>
-            <Link to={'/search'} className="text-lg text-teal-500 hover:underline text-center">View All posts</Link>
+            <Link
+              to={"/search"}
+              className="text-lg text-teal-500 hover:underline text-center"
+            >
+              View All posts
+            </Link>
           </div>
         )}
+      </div>
+      <div className="p-3 bg-amber-100 dark:bg-slate-700">
+        <CallToAction />
       </div>
     </div>
   );
